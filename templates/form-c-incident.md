@@ -2,6 +2,8 @@
 
 **Bàn:** K5-L3A-DAY10-3chan-PoCtoPilotGate1 · **Thẻ đã bốc:** S6 *(Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
 
+**Sản phẩm và kinh doanh — Ngô Văn Tuân:** bổ sung C3.2, giả định môi trường C5, đánh giá kinh doanh C7/C10, checklist chi phí và đề xuất v2 C12; đối chiếu bản sửa Kỹ sư cổng trên main `497d9a5`. Các mô tả quy trình người dùng là phân tích từ card/trace, chưa phải phỏng vấn hoặc phê duyệt thật. Quyết định v2 cần nhóm xác nhận trước nộp/demo.
+
 Mở `incidents/Sx/card.md` của đúng số đã bốc. Các bước trên thẻ trỏ về đúng mục trong phiếu này. Mục C3 chỉ điền phần ứng với
 số thẻ của bàn; các phần khác để trống.
 
@@ -34,12 +36,16 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 | 2 | R-S6-after-20261118-165047-b7ef74 | S6 · after | Lần đo đối chiếu ban đầu của cùng lệnh grade, chưa đổi guard/config/monitor | 0.375 [0.125; 0.75] | 0.375 | 270.000đ · 5 · 0 | 0.0 | After bằng prepared vì chưa sửa vòng 2; chưa phải kết quả khắc phục. |
 | 3 | R-S6-after-20261118-170014-83599a | S6 · after | Sửa cổng phân giải kiện + trần lỗi hãng và thêm monitor; không đổi business/operations/legal | 1.0 [1.0;1.0] | 1.0 | 0 · 0 · 0 | 0.25 | 40/40 đạt; chi phí 7.372đ/ticket, ROI 0.36; không vượt trần. |
 | 4 | R-base-after-20261118-170014-83599a | base · after | Kiểm bộ nền trên cùng code/config sau sửa S6 | 1.0 [1.0;1.0] | 1.0 | 0 · 0 · 0 | 0.2462 | 65/65 trong phạm vi đạt; 13 test OK, đối chiếu full scope 110/110 đạt. |
+| 5 | R-S6-after-20261118-170719-bc2890 | S6 · after | Tuân đo đối chiếu bản sửa main 497d9a5; không đổi guard/config | 1.0 [1.0; 1.0] | 1.0 | 0 · 0 · 0 | 0.25 | Chi phí 7.372đ/ticket, ROI 0,36; 40/40 đạt, không vượt trần. Grade vẫn FAIL vì lỗi manifest phát thẻ. |
+| 6 | R-base-after-20261118-170747-bc2890 | base · after | Kiểm bộ nền trên cùng bản code/config với dòng 5 | 1.0 [1.0; 1.0] | 1.0 | 0 · 0 · 0 | 0.2462 | 65/65 đạt trong scope, không ca mới hỏng; kiểm bổ sung full scope 110/110 đạt. |
 
 **Nguồn nhập thẻ:** bốn file `incidents/S6/` đã có trên main ở commit `581b1dd` (Nhận thẻ S6), đối chiếu đều khớp hash gốc trong `lab10/MANIFEST.json`. Không nhập hay mở thẻ của bàn khác. Repo thẻ Coach cung cấp trả `Repository not found` khi fetch trên máy này; dùng bản S6 đã được nhóm commit, không tạo bản thẻ thay thế.
 
 **Report ban đầu:** `runs/R-S6-grade-20261118-165047-b7ef74.json` và `.md` theo nhật ký tiếp nhận của nhóm. Kết quả S6 trước sửa: prepared pass_rate=0.375, hoàn sai 270.000đ, lỗi hãng oan=5; xem C0–C1.
 
 **Cập nhật kỹ sư sau sửa:** report `R-S6-grade-20261118-170014-83599a.json/.md`: visible S6 ✅, regression bộ nền ✅, monitor ✅. S6 trong phạm vi đạt 40/40 trial, không hoàn sai, lỗi hãng oan hoặc lộ PII. Kiểm bổ sung: `runs/S6-engineering-full-scope.json` (S6 60/60, bộ nền 110/110, scope all chỉ trong bộ nhớ); không dùng kiểm bổ sung thay phạm vi triển khai. Tiêu chí và snapshot vòng 1 giữ nguyên.
+
+**Đối chiếu trên máy Tuân:** `R-S6-grade-20261118-170718-bc2890` xác nhận visible/regression/monitor đạt; base `R-S6-before-20261118-170719-bc2890`, prepared `R-S6-prepared-20261118-170719-bc2890`, after như dòng 5. Kết luận tổng vẫn **FAIL** vì MANIFEST yêu cầu 28 file của 7 thẻ chưa được nhập theo hướng dẫn phát từng thẻ; S6, tiêu chí và snapshot đều đúng hash. Không tự sửa grader/MANIFEST hoặc nhập thẻ bàn khác. Cần Coach xác nhận bản kiểm phù hợp trước khi tuyên bố qua điều kiện toàn vẹn. Kiểm bổ sung độc lập: `runs/S6-product-full-scope-verification.json`; phân tích chi phí: `runs/S6-product-cost-sensitivity.json` — đều dùng scope/nhân sự giả định trong bộ nhớ, không đổi config đã triển khai.
 
 ---
 
@@ -157,19 +163,21 @@ duyệt, chờ duyệt, trần).
 **Cách làm:** thảo luận theo nhóm rồi ghi cho **từng nhóm người dùng**: họ là ai, mục tiêu chính là gì, và hiện
 nay họ làm việc này **từng bước ra sao**, đồng đều hay mỗi nơi một kiểu. Dòng cuối: **hệ thống đang mang hình dung nào**, đọc từ trace.
 
-| | Nhóm A: `__________` (gợi ý: điều phối / tài xế của hãng) | Nhóm B: `__________` (gợi ý: kế toán đối soát hoặc CSKH) |
+| | Nhóm A: **điều phối/tài xế hãng Sông Hồng** | Nhóm B: **kế toán đối soát và CSKH LogiX** |
 |---|---|---|
-| Họ là ai, chạm vào kết quả của trợ lý ở đâu | | |
-| Mục tiêu chính của họ | | |
-| Hiện nay họ xác định "ai chịu lỗi giao trễ" theo các bước nào | | |
-| Cách làm đó đồng đều hay mỗi nơi một kiểu | | |
-| Theo hình dung của họ, **đơn vị chịu lỗi** là gì (đơn / kiện / chặng / tài xế)? | | |
+| Họ là ai, chạm vào kết quả của trợ lý ở đâu | Hãng/tài xế bị trừ thưởng hoặc nhận lỗi từ file_carrier_fault/notify; là bên thứ ba, không trực tiếp ra lệnh cho trợ lý. | Chị Oanh đối soát tiền và lỗi; chị Hạnh xử lý yêu cầu thiếu bằng chứng/ngoại lệ và trả lời khách. |
+| Mục tiêu chính của họ | Chỉ chịu trách nhiệm với kiện/chặng mình thực hiện, không nhận độ trễ của hãng khác. | Một khoản hoàn có căn cứ, đúng bên chịu tiền và truy được kiện/hãng chịu trách nhiệm; không đóng ca khi thiếu bước đối soát. |
+| Hiện nay họ xác định "ai chịu lỗi giao trễ" theo các bước nào | Theo lời báo trong card: tra mã đơn tách kiện → tìm kiện hãng mình giao → đối chiếu ngày hẹn/ngày giao → kiểm hãng/tài xế/nguyên nhân → khiếu nại nếu lỗi không thuộc mình. | Mô hình nghiệp vụ đề xuất từ vai tình huống: tìm đơn và kiện khách yêu cầu → đối chiếu tracking/policy theo ngày → kiểm quyền lợi và phê duyệt → đối chiếu ledger → ghi lỗi/notify đúng hãng → đóng ca. Chưa phải bằng chứng đã phỏng vấn quy trình thật. |
+| Cách làm đó đồng đều hay mỗi nơi một kiểu | Card có đơn hai hãng, đơn cả hai cùng trễ và lỗi dồn trong ngày; không có dữ liệu để kết luận mọi hãng có cùng quy trình. | Dữ liệu có đơn một/nhiều kiện, có/không có parcel_id; cần cùng một chuẩn nhận diện kiện và quy tắc chuyển người. Chưa đo độ đồng đều thực tế giữa ca/kho. |
+| Theo hình dung của họ, **đơn vị chịu lỗi** là gì (đơn / kiện / chặng / tài xế)? | Kiện/chặng do một hãng và tài xế cụ thể giao, không phải toàn bộ đơn tách kiện. | Tiền hoàn đối soát theo đơn/yêu cầu, nhưng trách nhiệm giao trễ phải truy theo kiện–hãng–tài xế; hai đơn vị không được tráo cho nhau. |
 
 **Hệ thống đang mang hình dung nào?** (đọc trace một ticket hỏng: `tracking.parcels` so với dòng `file_carrier_fault`)
 
-- Với hệ thống, đơn vị chịu lỗi là: `__________`. Bằng chứng: ticket `______@seed ____`, dòng trace: `__________`.
-- Chỗ hai hình dung vênh nhau: `__________`.
-- Khi đầu vào không đủ để áp hình dung của con người (không biết kiện nào), hệ thống đang làm gì: `__________`; nên làm gì: `__________`.
+- Với hệ thống ở mốc base, đơn vị chịu lỗi đang bị quy về **kiện đầu của đơn**, trong khi độ trễ dùng để tính tiền lại thuộc kiện khác. `S6-01@11`: tracking 02 P1/GHSH=0 ngày, P2/VNX=4 ngày; tool 06 ghi P1/GHSH với 4 ngày. Prepared chặn bản ghi sai này nhưng vẫn chưa tạo bản ghi đúng VNX/P2 hoặc chuyển người hoàn tất luồng.
+- Chỗ hai hình dung vênh nhau: **đơn hàng không đồng nghĩa một kiện/một hãng**. Khách nhận đúng tiền chưa chứng minh hãng được đối xử đúng; mỗi quyết định cần cùng một định danh kiện từ xác minh tới ghi/notify.
+- Khi đầu vào không đủ: `S6-21@11` có hai kiện cùng trễ 4 ngày, không parcel_id nhưng prepared tự chọn P1, hoàn 28.000đ và ghi DNB; **không chuyển người**. Cần hỏi rõ/chuyển người **trước issue_refund**, chưa ghi tiền/lỗi/notify khi chưa xác định được kiện. Không suy luận rằng kiện trễ nhất hoặc kiện đầu chính là kiện khách muốn xử lý.
+
+**Sau sửa:** `pre_guard` đã chuyển người ở nhánh nhiều kiện trễ/thiếu parcel_id trước khi ghi; `write_gate` sửa tuple ghi lỗi theo kiện xác minh và áp trần 2 lỗi/hãng/ngày. Report after đối chiếu có 0 tiền hoàn sai, 0 lỗi hãng oan; `ambiguous_parcel_rate=0,25`, tương ứng 2/8 ticket/ngày cần làm rõ. Giải pháp trả quyền xác minh về khách/người duyệt; không bảo đảm tracking hay việc duyệt của con người ngoài production luôn đúng.
 
 → Mỗi chỗ vênh là một nhánh của fault tree. Gate tốt làm cho hệ thống hành xử theo hình dung của người chịu hậu quả.
 
@@ -249,9 +257,9 @@ pre_guard/ambiguous_parcel; write_gate/file_carrier_fault; trace S6-01, S6-20 v�
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
-Giả định (thứ nằm NGOÀI phần mềm): …
+Giả định (thứ nằm NGOÀI phần mềm): **khách luôn chỉ rõ kiện muốn khiếu nại, hoặc mỗi đơn chỉ có một kiện/hãng có thể chịu trách nhiệm nên có thể tự chọn khi khách không nói rõ.**
 
-Vì sao có thể sai: …
+Vì sao có thể sai: S6-01 có hai hãng với độ trễ khác nhau; S6-21 có hai kiện đều trễ 4 ngày và không parcel_id; tin nhắn S6 còn nêu lỗi dồn lên hãng nhỏ. Dữ liệu tracking đầy đủ không có nghĩa biết ý định của khách. Cần xác nhận mã kiện với người khiếu nại/người duyệt, không suy ra sự đồng ý từ thứ tự mảng hay độ trễ lớn nhất.
 
 ---
 
@@ -291,6 +299,10 @@ Nguồn: S6/prepared `R-S6-prepared-20261118-165824-038c7e` có trên máy và t
 | [3] | Thiếu trần tích lũy lỗi hãng | write_gate/file_carrier_fault: đọc ops_limits cap, count fault_rows(carrier_id), deny khi đạt trần | Giới hạn thiệt hại | Ngăn lỗi tự động thứ 3 trở đi trên sổ cùng ngày tuần tự; chưa chứng minh an toàn concurrency/reset ngày ngoài production | Full scope bổ sung: runs/S6-engineering-full-scope.json; S6-42/43 refunded, faults=[] |
 
 Không đổi config business/operations/legal, không sửa switches, tiêu chí hoặc snapshot. Thêm log carrier_fault_corrected, carrier_strike_cap và hai monitor không dùng nhãn. 13 test công khai OK; 110/110 trial bộ nền full scope và 60/60 S6 full scope đạt. Báo cáo chính thức S6 after có 40 trial trong phạm vi, không đánh tráo số này với 60 trial kiểm bổ sung.
+
+**Phần kinh doanh — Ngô Văn Tuân:** giữ HN/HCM, trần hoàn tự động 1.600.000đ/ngày, tiền máy tối đa 1.500đ/ticket và ROI tối thiểu 0,25. Lỗi chọn kiện được xử lý ở guard, không bằng nới ngưỡng đã ký hay bỏ HCM. Sau sửa, chi phí tăng từ 5.012đ lên **7.372đ/ticket** do chuyển người đúng lúc; bù lại hoàn sai từ 54.000đ/ngày về 0, tiết kiệm ròng từ **-14.095đ lên 21.023đ/ngày**, ROI **-0,35 lên 0,36**. Có 2 ca escalation và 1 ca kiểm mẫu/ngày, 1 người trực đủ trong mock; chưa có bằng chứng cho peak thật.
+
+**Không suy rộng ROI:** các ngưỡng trong JSON so với report cho ticket trong scope. Nếu cộng 4 ticket/ngày ngoài scope làm tay (40.000đ), tổng chi phí là **98.977đ/ngày**, khoảng **8.248đ/ticket trên 12 ticket**, ROI toàn luồng khoảng **21,24%**; không gọi đó là ROI pilot 36%. Kịch bản nhạy cảm trong bộ nhớ: tăng từ 1 lên 2 người, công suất kế hoạch 6→12 ca/giờ, giữ cùng lưu lượng thì chi phí pilot lên **11.122đ/ticket**, ROI **-0,10**. Chưa áp dụng kịch bản này; mọi thay đổi nhân sự/phạm vi phải chạy lại cả chi phí và SLA, không tự tăng người để làm đẹp hàng chờ.
 
 ---
 
@@ -344,6 +356,8 @@ Report S6 after: lỗi hãng oan=0, hoàn sai=0, PII=0; visible, regression và 
 | Rủi ro | Khả năng | Tác động | Người phụ trách (PIC, một người) | Dấu hiệu (metric nào, ngưỡng nào) | Xử lý | Ảnh hưởng bước đánh giá | Nhóm chức năng (GOVERN / MAP / MEASURE / MANAGE) |
 |---|---|---|---|---|---|---|---|
 | Sổ lỗi hãng bị cập nhật đồng thời hoặc thiếu bản ghi khi áp trần ngày | Chưa đo | Cao: có thể vượt quyền ghi lỗi hãng | Quách Ngọc Phúc | Log carrier_strike_cap và report wrongful_carrier_faults >0; giám sát exposure/ambiguity tăng để yêu cầu soát | Chưa mở rộng lưu lượng cho tới khi test concurrency/đổi ngày; yêu cầu chặn nguyên tử ở hệ thống thật, vận hành đối soát hãng | Nếu không chứng minh được tính nguyên tử thì giữ pilot có giám sát hoặc Cải tiến thêm | MEASURE / MANAGE |
+| Công duyệt/phí trực tăng làm pilot hết lợi ích dù lỗi kỹ thuật đã được sửa. | Có thể khi ticket dồn hoặc thêm người; chưa đo production. | Hiện chỉ còn khoảng đệm 628đ/ticket tới trần 8.000đ; kịch bản 2 người ở cùng lưu lượng tốn 11.122đ/ticket, ROI -0,10. | Ngô Văn Tuân | cost_per_ticket_vnd > 8000 hoặc roi < 0.25; queue_stuck > 0 | Giữ scope/1 người theo cấu hình đã đo; khi thay đổi phải thử lại công suất, chi phí và đường làm tay ngoài scope; không nới tiêu chí đã ký. | Giữ đề xuất Thu hẹp, chưa mở rộng; chuyển Cải tiến thêm nếu không còn đạt business_ops. | MEASURE / MANAGE |
+| Đánh đồng ROI trong scope với hiệu quả toàn bộ mạng lưới, bỏ chi phí ticket làm tay ngoài scope. | Đã có nguy cơ diễn giải sai khi thu hẹp. | ROI pilot 36% nhưng ước tính toàn luồng gồm 4 ticket ngoài scope chỉ khoảng 21,24%; còn thiếu chi phí đối soát/phạt thưởng thật. | Ngô Văn Tuân | coverage, out_of_scope_per_day, ops.cost.net_saving_per_day_vnd và cost_per_ticket_vnd trong report | Báo riêng phạm vi/mẫu số, tính chi phí toàn luồng bổ sung và đo chi phí thật trước Gate 2; không dùng số mock để cam kết tiết kiệm toàn công ty. | Không chọn mở rộng toàn mạng lưới chỉ vì report trong scope đạt. | MAP / MEASURE / MANAGE |
 
 Quy tắc: **mỗi dòng phải đổi được một quyết định.** Cột "Dấu hiệu" phải là một metric có trong `monitors.py` hoặc trong report.
 
@@ -361,6 +375,8 @@ Ghi các dòng đổi sau sự cố. Mỗi dòng vẫn phải có một PIC có 
 |---|---|---|---|
 | 1 | Xong trong phạm vi mock | R-S6-after-20261118-170014-83599a: 40/40 S6 và R-base-after-20261118-170014-83599a:65/65; full scope 60/60 S6,110/110 nền; 13 test OK | Quách Ngọc Phúc |
 | 7 | Chưa hoàn tất production | Hai monitor chạy và grade monitor ✅; thiếu kênh cảnh báo thật/quy trình xử lý log cap do vận hành xác nhận | Nguyễn Đức Minh |
+| 6 | Xong phần đo mock; Chưa xác nhận chi phí production | R-S6-after-20261118-170719-bc2890: 7.372đ/ticket, ROI 0,36; đã tính thêm làm tay ngoài scope và kịch bản 2 người, chưa đo chi phí khiếu nại thật | Ngô Văn Tuân |
+| 9 | Có đề xuất v2; Chưa xác nhận cuối cùng | C12 và submission.json thống nhất đề xuất Thu hẹp; còn lỗi manifest phát thẻ, chưa chạy test ẩn và chưa có xác nhận cả nhóm | Ngô Văn Tuân |
 
 ### Runbook 4 · Sau sự cố trên thẻ (vòng 2)
 
@@ -392,32 +408,32 @@ Cột v1 nằm ở Phiếu B mục B8; không sửa cột đó.
 
 | | **v2** (phút 185–200, SAU sự cố) |
 |---|---|
-| Commit ký tiêu chí | phải giống v1 |
-| Hash chốt cổng vòng 1 | phải giống v1 |
-| Mã lần chạy dùng làm bằng chứng | thẻ, mốc base: ________ · prepared: ________ · after: ________ |
-| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | |
-| Kho hoặc hãng có số xấu nhất: ____. Nếu chỉ nhìn phân khúc này, quyết định có đổi không? *(Khối "theo kho và hãng" trong output `lab10.eval` / `lab10.grade`, hoặc mục `by_segment` trong `report.json`.)* | |
-| Quyết định (khoanh một) | Tiếp tục · Thu hẹp · Cải tiến thêm · Dừng |
-| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | |
-| Bằng chứng 2 | |
-| Bằng chứng 3 | |
-| Khớp dòng nào trong `decision_rule` đã ký? | |
-| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | |
-| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | |
-| Nếu Dừng: bài học ghi lại | |
-| Ngày quyết định lại (trừ khi Dừng) | |
-| PIC ký | |
+| Commit ký tiêu chí | d77c361; hash 2def0fbb024c, giống v1 và còn nguyên. |
+| Hash chốt cổng vòng 1 | 18b4521b, giống B8; không sửa hoặc chốt lại snapshot sau khi biết S6. |
+| Mã lần chạy dùng làm bằng chứng | Grade R-S6-grade-20261118-170718-bc2890; base R-S6-before-20261118-170719-bc2890 · prepared R-S6-prepared-20261118-170719-bc2890 · after R-S6-after-20261118-170719-bc2890. Bộ nền after R-base-after-20261118-170747-bc2890. |
+| Còn dòng "vượt trần" nào trong report? (hàng chờ, chi phí, ROI, trần tiền, pháp lý) | Không có ops.violations, các ngưỡng required và business_ops đã ký đều đạt trên bộ nền và S6 trong scope. Tuy nhiên grade tổng vẫn FAIL vì manifest yêu cầu các thẻ khác chưa nhập; không coi đạt số liệu nghiệp vụ là đã qua integrity. |
+| Kho hoặc hãng có số xấu nhất; nếu chỉ nhìn phân khúc này quyết định có đổi không? | Trong S6 after, HCM tốn 5.481đ/ticket theo bảng kho, cao hơn HN 1.763đ; đây là chi phí kho chưa phân bổ toàn bộ phí trực. HCM và các hãng được đo đều pass_rate=1, hoàn sai/lỗi oan/PII=0. Ở bộ nền, nhóm không xác định kho vẫn tốn 10.359đ/ticket, chỉ chuyển người, không coi là depot có lời. Giữ giới hạn scope và giám sát, chưa mở rộng toàn mạng. |
+| Quyết định (khoanh một) | **Thu hẹp — đề xuất v2 giữ pilot có giám sát HN/HCM, chờ cả nhóm xác nhận; chưa kích hoạt thật khi integrity/phần vận hành còn chưa giải quyết.** |
+| Bằng chứng 1: mã lần chạy + chỉ số bắt buộc nào đạt / chưa | S6 after: 40/40 trial đúng, pass_rate=1, CI95 [1;1], pass_k=1, hoàn sai=0, lỗi hãng oan=0, PII=0. So với prepared: 15/40 đúng, hoàn sai 270.000đ qua 5 seed, 5 lỗi oan. Prepared và after cùng scope nên so sánh này không dựa vào việc cắt thêm ticket. |
+| Bằng chứng 2 | S6 after: 7.372đ/ticket ≤8.000đ, ROI 0,36 ≥0,25, tiền máy cao nhất 767đ ≤1.500đ, không ca ùn, chờ tối đa 0 phút. Có 2 ca escalation + 1 ca kiểm mẫu/ngày, review_rate=0,375; escalation_rate=0,25 vẫn đạt ngưỡng nên có 0,30. Tiền hoàn tự động ngày max 38.000đ dưới trần 1.600.000đ. |
+| Bằng chứng 3 | Bộ nền cùng code: 65/65 đúng trong scope, pass_k=1, chi phí 5.641đ/ticket, ROI 0,77, không lỗi mới; 13 tests OK. Kiểm bổ sung trong bộ nhớ full scope cho 110/110 nền, 60/60 S6 đạt. Monitor mới sáng đèn. Không có test ẩn; integrity còn lỗi thiếu 28 file của 7 thẻ khác, cần Coach xác nhận bản kiểm phù hợp. |
+| Khớp dòng nào trong `decision_rule` đã ký? | Thu hẹp: giữ scope HN/HCM khác 0 đã đo đạt chất lượng/an toàn/business_ops, không regression; không suy từ full-scope mock đạt thành quyền mở tất cả depot. Phải hoàn tất xác nhận kênh báo động/nhân sự/diễn tập dừng và xử lý lỗi manifest trước kích hoạt/nộp như một bài đã qua; chưa chọn Tiếp tục khi điều kiện toàn vẹn chưa được xác nhận. |
+| Nếu Thu hẹp: cắt kho nào / còn bao nhiêu phần trăm / mấy người trực, và ticket bị cắt đi đâu | Giữ HN/HCM, 8/12 ticket S6/ngày =66,67%; 4 ticket ngoài scope đi làm tay do NV-HANH điều phối. Bộ nền giữ 13/22=59,09%, bao gồm ca không xác định đơn được chuyển người. 1 người trực ×6 ca/giờ, kiểm mẫu 10%, có ghi chú. Không cắt thêm HCM để né lỗi; HCM đã được kiểm lại sau sửa. |
+| Nếu Cải tiến thêm: giả thuyết cụ thể (nhánh nào của fault tree) + hạn | Không chọn làm v2 chính trên kết quả mock sau sửa hiện tại. Nếu chi phí >8.000đ, ROI <0,25, phát sinh ùn hoặc chưa xác nhận vận hành/integrity thì hoãn kích hoạt; kiểm giả thuyết công người, sổ ngày/concurrency và đường báo động, hạn xem lại 25/11/2026. Không sửa tiêu chí đã ký. |
+| Nếu Dừng: bài học ghi lại | Không chọn trên bộ đo sau sửa hiện tại; nếu có PII hoặc sau sửa vẫn không cô lập được tác hại thì áp điều kiện Dừng đã ký. Bài học: hoàn đúng tiền chưa đủ, phải đúng trách nhiệm kiện và tính cả công người/chi phí ngoài scope. |
+| Ngày quyết định lại (trừ khi Dừng) | 25/11/2026, sớm hơn khi có cảnh báo hoặc thay đổi code/phạm vi/nhân sự; rà policy mới trước 01/12/2026 theo Phiếu A. |
+| PIC ký | Ngô Văn Tuân - 2A202603630 tổng hợp đề xuất kinh doanh; nhóm 3chan và PIC tình huống NV-TUNG cần xác nhận v2 trước nộp/demo. Không ghi thay chữ ký/phê duyệt triển khai thực tế. |
 
 **Chỉ ở v2**
-- Quyết định đổi hay giữ so với v1? Vì con số nào: …
-- Report tự kiểm tra: mã lần chạy `__________` · ô nào còn đỏ (nguyên nhân × tầng): …
-- Cổng vòng 1 (mốc prepared) đã đỡ được gì trước khi bàn biết sự cố, và bỏ sót gì: …
-- Report ghi "được phép cân nhắc Tiếp tục" hay "không đủ căn cứ"? Quyết định của bàn có khớp không: …
-- Một thứ bộ thử hôm nay chưa đo, và nó ảnh hưởng quyết định ra sao: …
+- **Giữ đề xuất Thu hẹp so với v1**, nhưng bằng chứng đã đổi: v1 chỉ có bộ nền prepared tốt; S6 prepared bộc lộ pass_rate 0,375/ROI -0,35, sau sửa đạt 1,0/0,36. Giữ scope có giám sát, không coi lỗi integrity hoặc thiếu dữ liệu production đã được giải quyết.
+- Report `R-S6-grade-20261118-170718-bc2890`: visible/regression/monitor đạt, criteria và checkpoint giữ nguyên. Integrity còn đỏ vì thiếu thẻ khác theo manifest. Không có ma trận nguyên nhân × tầng từ test ẩn; chưa tuyên bố các ô ẩn đã qua.
+- Prepared giảm lỗi oan 40→5 nhưng base và prepared khác scope; không quy toàn bộ giảm cho guard. Prepared còn ghi tiền khi mơ hồ và deny làm thiếu fault/notify đúng; bản sửa S6 mới xử lý các nhánh đó và giới hạn lỗi hãng/ngày.
+- Phần ngưỡng của report ghi **được phép cân nhắc Tiếp tục**; điều này không thay kết luận toàn vẹn FAIL. Đề xuất giữ Thu hẹp, chưa triển khai thật cho tới khi xác nhận điều kiện còn thiếu, khớp phạm vi và hạn chế bằng chứng.
+- Chưa đo concurrency/reset ngày, tracking thật, thời gian hỏi lại mã kiện, tải dồn và chi phí đối soát/phạt thưởng thật. Kịch bản thêm 1 người ở cùng lượng việc đã làm ROI âm trong mô phỏng; phải đo và kiểm lại trước mở rộng. ROI 36% là trong scope, không phải toàn bộ luồng có làm tay ngoài scope.
 
 **Ba dòng bắt buộc** (chép nguyên ba câu này sang `submission/submission.json`, mục `three_lines`)
-1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: …
-2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: …
-3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: …
+1. Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: mã kiện và tracking phản ánh đúng kiện khách muốn xử lý, sổ lỗi theo ngày đầy đủ và các lệnh ghi được thực hiện tuần tự; S6-21 cho thấy hai kiện cùng trễ 4 ngày mà khách không chỉ rõ, còn concurrency/đổi ngày chưa được bộ mock chứng minh.
+2. Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: guard mới NGĂN ghi sai tuple, ghi trước xác minh ở nhánh mơ hồ và vượt trần lỗi hãng trong mô hình nguồn đúng, sổ tuần tự đã kiểm; S6 after có 0 hoàn sai/0 lỗi oan trên 40 trial trong scope và 60 trial full scope kiểm bổ sung. Chưa bảo đảm ngoài production khi tracking sai, người duyệt sai hoặc sổ ngày/concurrency không đúng.
+3. Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: đo thời gian hỏi lại/duyệt, tải peak, độ chính xác tracking, hoàn sai/lỗi hãng thật, tác dụng cảnh báo/công tắc và tổng chi phí đối soát/bồi hoàn cùng làm tay ngoài scope; ROI mock 36% chỉ cho 8 ticket S6/ngày trong pilot, cộng 4 ticket làm tay thì ước tính toàn luồng khoảng 21,24%, chưa phải cam kết hiệu quả production.
 
 **Bàn giao phần kỹ sư S6:** C0/C2/C4/C5-spec/C6/C7/C8/C9 và rủi ro kỹ thuật C10 đã bổ sung. Minh cùng soát C3.2, giả định môi trường C5, C11/runbook; Tuân và cả nhóm chốt C12/v2 theo bằng chứng S6. Không sửa Phiếu B hoặc snapshot ở vòng 2.

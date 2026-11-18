@@ -1,12 +1,17 @@
 {
-  "team": "",
-  "members": [],
+  "team": "K5-L3A-DAY10-3chan-PoCtoPilotGate1",
+  "members": [
+    "QuachNgocPhuc-2A202603665",
+    "NguyenDucMinh-2A202603633",
+    "NgoVanTuan-2A202603630",
+    "HoQuocToan-2A202603668"
+  ],
   "incident": "S6",
-  "decision_v1": "",
-  "decision_v2": "",
+  "decision_v1": "Thu hẹp",
+  "decision_v2": "Thu hẹp",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Một giả định về môi trường mà thiết kế của đội đang dựa vào, có thể sai ngoài thực tế: mã kiện và tracking phản ánh đúng kiện khách muốn xử lý, sổ lỗi theo ngày đầy đủ và các lệnh ghi được thực hiện tuần tự; S6-21 cho thấy hai kiện cùng trễ 4 ngày mà khách không chỉ rõ, còn concurrency/đổi ngày chưa được bộ mock chứng minh.",
+    "reduce_or_prevent": "Gate của đội chỉ GIẢM khả năng hay thực sự NGĂN được tác hại? Vì sao: guard mới NGĂN ghi sai tuple, ghi trước xác minh ở nhánh mơ hồ và vượt trần lỗi hãng trong mô hình nguồn đúng, sổ tuần tự đã kiểm; S6 after có 0 hoàn sai/0 lỗi oan trên 40 trial trong scope và 60 trial full scope kiểm bổ sung. Chưa bảo đảm ngoài production khi tracking sai, người duyệt sai hoặc sổ ngày/concurrency không đúng.",
+    "measure_in_pilot": "Vì data là mock, cần đo lại gì trong pilot thật trước Bước đánh giá 2: đo thời gian hỏi lại/duyệt, tải peak, độ chính xác tracking, hoàn sai/lỗi hãng thật, tác dụng cảnh báo/công tắc và tổng chi phí đối soát/bồi hoàn cùng làm tay ngoài scope; ROI mock 36% chỉ cho 8 ticket S6/ngày trong pilot, cộng 4 ticket làm tay thì ước tính toàn luồng khoảng 21,24%, chưa phải cam kết hiệu quả production."
   }
 }
