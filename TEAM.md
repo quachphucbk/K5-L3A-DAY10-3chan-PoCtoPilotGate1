@@ -5,7 +5,7 @@
 - Tên nhóm (`TenNhom`, không dấu, không khoảng trắng): 3chan
 - Lớp: L3A
 - Repo của bàn: https://github.com/quachphucbk/K5-L3A-DAY10-3chan-PoCtoPilotGate1
-- Thẻ sự cố đã bốc (S1–S8):
+- Thẻ sự cố đã bốc (S1–S8): S6
 
 ## Thành viên
 
