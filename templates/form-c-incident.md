@@ -1,6 +1,6 @@
 # Phiếu C · Sự cố và quyết định v2 · Khối 3 (phút 125–200)
 
-**Bàn:** ______ · **Thẻ đã bốc:** ___ *(để trống tới phút 125; bốc số xong thì ghi đúng số đó, ví dụ `S3`. Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
+**Bàn:** K5-L3A-DAY10-3chan-PoCtoPilotGate1 · **Thẻ đã bốc:** S6 *(Lab Coach đối chiếu với sổ; lệnh tự kiểm tra in dòng này trong report.)*
 
 Mở `incidents/Sx/card.md` của đúng số đã bốc. Các bước trên thẻ trỏ về đúng mục trong phiếu này. Mục C3 chỉ điền phần ứng với
 số thẻ của bàn; các phần khác để trống.
@@ -30,10 +30,14 @@ Mỗi lệnh `lab10.eval` và `lab10.grade` tự ghi một dòng vào `runs/jour
 
 | # | Mã lần chạy | Bộ ticket · mốc | Đổi MỘT thứ gì so với lần trước | pass_rate (khoảng tin cậy 95%) | pass_k | Hoàn sai (đ) · lỗi hãng oan · lộ dữ liệu | Tỉ lệ chuyển người | Kết luận (một câu) |
 |---|---|---|---|---|---|---|---|---|
-| 1 | | Sx · prepared | nhận thẻ đã bốc, chưa sửa thêm (đúng cổng vòng 1 đã chốt) | | | | | |
-| 2 | | Sx · after | | | | | | |
+| 1 | R-S6-prepared-20261118-165047-b7ef74 | S6 · prepared | Nhận S6, chưa sửa vòng 2; snapshot 18b4521b còn nguyên | 0.375 [0.125; 0.75] | 0.375 | 270.000đ · 5 · 0 | 0.0 | Cổng vòng 1 chưa xử lý hết S6; ROI -0,35 dưới ngưỡng 0,25. |
+| 2 | R-S6-after-20261118-165047-b7ef74 | S6 · after | Lần đo đối chiếu ban đầu của cùng lệnh grade, chưa đổi guard/config/monitor | 0.375 [0.125; 0.75] | 0.375 | 270.000đ · 5 · 0 | 0.0 | After bằng prepared vì chưa sửa vòng 2; chưa phải kết quả khắc phục. |
 | 3 | | Sx · after | | | | | | |
 | 4 | | base · after | (kiểm không regression) | | | | | |
+
+**Nguồn nhập thẻ:** bốn file `incidents/S6/` đã có trên main ở commit `581b1dd` (Nhận thẻ S6), đối chiếu đều khớp hash gốc trong `lab10/MANIFEST.json`. Không nhập hay mở thẻ của bàn khác. Repo thẻ Coach cung cấp trả `Repository not found` khi fetch trên máy này; dùng bản S6 đã được nhóm commit, không tạo bản thẻ thay thế.
+
+**Report ban đầu:** `runs/R-S6-grade-20261118-165047-b7ef74.json` và `.md`. Kết luận hiện là **FAIL**, không tuyên bố đã đạt: ngoài visible và monitor chưa đạt, integrity đang báo thiếu 28 file của 7 thẻ khác do MANIFEST kiểm tất cả S1–S8 trong khi hướng dẫn mới chỉ nhập thẻ đã bốc. Bốn file S6, tiêu chí và snapshot đều khớp hash. Cần Lab Coach xác nhận cách kiểm integrity phù hợp với cách phát từng thẻ; không tự sửa MANIFEST/grader hoặc nhập thẻ khác để làm đẹp kết quả.
 
 ---
 
@@ -47,19 +51,19 @@ Chạy **trước khi sửa bất cứ thứ gì**:
 python3 -m lab10.grade --incident Sx
 ```
 
-- Mã lần chạy grade: `__________` · base: `__________` · prepared: `__________`
-- Cổng vòng 1 đỡ được ô / con số nào (so cột base với cột prepared): …
-- Khối kinh doanh và vận hành còn dòng nào vượt trần: …
+- Mã lần chạy grade: `R-S6-grade-20261118-165047-b7ef74` · base: `R-S6-before-20261118-165047-b7ef74` · prepared: `R-S6-prepared-20261118-165047-b7ef74`.
+- Cổng vòng 1 đỡ được ô / con số nào: lỗi hãng oan trong bảng ba mốc giảm từ 40 xuống 5, PII vẫn 0; hoàn sai vẫn 270.000đ cộng qua 5 seed (54.000đ ở ngày tệ nhất). Pass_rate từ 0,3333 lên 0,375, nhưng base đo 60 trials/12 ticket, prepared đo 40 trials/8 ticket, độ phủ giảm 100% xuống 66,67% theo phạm vi HN/HCM. Vì vậy không quy toàn bộ mức giảm lỗi cho guard, phải tách ảnh hưởng phạm vi và từng nhánh khi đọc trace. Bộ nền sau cổng vẫn đạt 100%, regression không có ca mới hỏng.
+- Khối kinh doanh và vận hành còn dòng nào vượt trần: **ROI -0,35 < 0,25**, tiết kiệm ròng **-14.095đ/ngày**, dù chi phí trong phạm vi 5.012đ/ticket ≤ 8.000đ. Chờ lâu nhất 0 phút, ca ùn 0; review_rate 0,125 trên 8 ticket/ngày tương ứng **1 ca/ngày** do kiểm mẫu 10%, escalation_rate 0. Tổng hoàn tự động cao nhất 38.000đ/ngày < trần 1.600.000đ; không thể dùng việc còn dưới trần tiền để bỏ qua hoàn sai/lỗi hãng oan. Các ngưỡng đã ký chưa đạt còn gồm pass_rate, pass_k, hoàn sai và lỗi hãng oan; chưa đủ căn cứ Tiếp tục.
 
 **Mở lại pre-mortem (Phiếu B mục B6), viết bằng bút khác màu.** Với thẻ S1, S3, S4, S5 đây là một phần của phần riêng theo thẻ.
 
-- Sự cố trên thẻ thuộc lăng kính nào (kỹ thuật, kinh doanh, con người và vận hành, pháp lý)? …
-- Có nằm trong các lý do bàn đã viết không? Nếu có: cổng vòng 1 đã đỡ được bao nhiêu (đọc cột prepared trong report)? Nếu không: vì sao cả bàn không nghĩ tới? …
+- Sự cố trên thẻ thuộc lăng kính **Kỹ thuật** (đúng kiện/đúng hãng), **Con người và vận hành** (hình dung khác nhau về đơn/kiện), **Pháp lý** (hãng/tài xế chịu lỗi oan) và **Kinh doanh** (ROI âm do tác hại). Chưa xác nhận mọi nguyên nhân kỹ thuật cho tới khi dò trace.
+- Có nằm trong các lý do bàn đã viết không? **Có một phần:** B6 vòng 1 đã nêu hoàn sai, ghi oan hãng và cổng kiểm kiện/hãng/độ trễ/policy; cổng prepared giảm số lỗi hãng oan được đo nhưng còn 5, không giảm 270.000đ hoàn sai. B6 chưa phân tích rõ chỗ vênh giữa đơn và kiện khi khách không chỉ định; cần mở C3.2 và đối chiếu từng trace, không coi lựa chọn mặc định của hệ thống là ý định của người dùng.
 - Lý do còn thiếu, thêm bây giờ:
 
 | Lý do thất bại (viết ở thì quá khứ) | Lăng kính | Kiểm được bằng gì (trace / data / config nào) |
 |---|---|---|
-| | | |
+| Đơn tách kiện đã bị quy trách nhiệm sai đối tượng khi hệ thống suy đoán kiện khách đang hỏi; tài xế/hãng phải chịu lỗi và pilot mất lợi ích tài chính. | Kỹ thuật; Con người/vận hành; Pháp lý; Kinh doanh | Triệu chứng trong card S6, bảng lỗi hãng oan/ROI ở report; tiếp theo so tracking.parcels với file_carrier_fault trên ít nhất hai ticket khác kiểu lỗi. Đây là bổ sung sau nhận thẻ, không ghi đè B6 vòng 1. |
 
 ---
 
