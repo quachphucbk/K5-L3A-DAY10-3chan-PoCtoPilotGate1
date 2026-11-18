@@ -377,24 +377,29 @@ Ghi các dòng đổi sau sự cố. Mỗi dòng vẫn phải có một PIC có 
 | 7 | Chưa hoàn tất production | Hai monitor chạy và grade monitor ✅; thiếu kênh cảnh báo thật/quy trình xử lý log cap do vận hành xác nhận | Nguyễn Đức Minh |
 | 6 | Xong phần đo mock; Chưa xác nhận chi phí production | R-S6-after-20261118-170719-bc2890: 7.372đ/ticket, ROI 0,36; đã tính thêm làm tay ngoài scope và kịch bản 2 người, chưa đo chi phí khiếu nại thật | Ngô Văn Tuân |
 | 9 | Có đề xuất v2; Chưa xác nhận cuối cùng | C12 và submission.json thống nhất đề xuất Thu hẹp; còn lỗi manifest phát thẻ, chưa chạy test ẩn và chưa có xác nhận cả nhóm | Ngô Văn Tuân |
+| 2 | Chưa xác nhận dữ liệu production | C3.2/C5: tracking theo kiện đã kiểm trong mock; chưa đo thiếu mã kiện, sai hãng/tài xế và độ trễ cập nhật trên dữ liệu thật | Nguyễn Đức Minh |
+| 3 | Xong kiểm mock; chưa kiểm đường gửi production | C0/C12: PII leaks = 0 trong bộ S6 sau sửa; chưa kiểm thử toàn bộ tích hợp gửi dữ liệu ra bên thứ ba | Nguyễn Đức Minh |
+| 4 | Chưa xác nhận diễn tập phân quyền/dừng | B7.5 Runbook 3 quy định NV-TUNG giữ công tắc và NV-HANH duyệt; chưa có biên bản diễn tập quyền bật/tắt và rollback thực tế | Nguyễn Đức Minh |
+| 5 | Chưa đo tải đỉnh production | B7.6: giả định 1 người xử lý 6 ca/giờ; C12 chưa đo peak, concurrency/reset ngày và SLA hỏi lại mã kiện | Nguyễn Đức Minh |
+| 8 | Xong kiểm mô phỏng; chưa hoàn tất đối soát thực địa | S6 after: 0 lỗi hãng oan, 0 hoàn sai, 0 PII trên trial trong scope; cần cơ chế tiếp nhận tranh chấp hãng/tài xế và đối soát sổ phạt/thưởng thực tế | Nguyễn Đức Minh |
 
 ### Runbook 4 · Sau sự cố trên thẻ (vòng 2)
 
 | Câu hỏi | Trả lời |
 |---|---|
-| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | |
-| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | |
-| Bàn đổi gì về **người** (số người trực, ai đứng tên, ai được gọi)? | |
-| Bàn đổi gì về **phạm vi** hoặc **quy trình** (kiểm mẫu, ghi chú giải thích, trần)? | |
-| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | |
-| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | |
-| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | |
+| Tín hiệu nào ở Runbook 2 (Phiếu B mục B7.5) lẽ ra phải báo trước sự cố này? Nó đã có chưa? | `wrongful_carrier_faults` (ĐỎ khi ≥1) và `wrongful_refund_vnd` (ĐỎ khi >0) phải báo lỗi S6. Prepared có 5 lỗi hãng oan và 270.000đ hoàn sai, nên cả hai vượt ngưỡng. Runbook 2 đã nêu ngưỡng, nhưng chưa có bằng chứng cảnh báo được gửi tự động tới người trực ở production; các con số đến từ report offline. |
+| Bàn thêm hoặc đổi ngưỡng nào, từ bao nhiêu thành bao nhiêu? | **Giữ nguyên ngưỡng ĐỎ đã ký/Runbook 2:** lỗi hãng oan 0→≥1; hoàn sai 0đ→>0đ; PII 0→≥1; `queue_stuck` 0→≥1; chờ tối đa <60→≥60 phút; chi phí/ticket ≤8.000→>8.000đ. **Bổ sung ngưỡng cảnh báo vận hành đề xuất, chưa cấu hình production:** số ticket nhiều kiện mơ hồ phát sinh từ 0→≥1 ca/giờ thì báo NV-HANH kiểm luồng chuyển người; mọi `file_carrier_fault` không có tuple kiện/hãng/tài xế khớp bằng chứng thì chặn và ghi log. Không đổi tiêu chí Gate 1 đã ký. |
+| Bàn đổi gì về **người** (số người trực, ai đứng tên, ai được gọi)? | Pilot HN/HCM giữ giả định **1 người duyệt ×6 ca/giờ** (B7.6/C12); **NV-HANH** nhận ca thiếu mã kiện và phân công thủ công; **NV-TUNG** giữ quyền tắt luồng ghi và chịu trách nhiệm cảnh báo; **NV-OANH** đối soát hoàn tiền, lỗi hãng và liên hệ đối tác. Nếu dự báo tải vượt năng lực hoặc chờ ≥60 phút thì NV-TUNG thu hẹp/tắt luồng liên quan, không tự tăng scope. Các vai trò là phân công thiết kế, cần xác nhận người trực thật. |
+| Bàn đổi gì về **phạm vi** hoặc **quy trình** (kiểm mẫu, ghi chú giải thích, trần)? | Giữ đề xuất **Thu hẹp HN/HCM: 8/12 ticket S6/ngày (66,67%)**, 4 ticket ngoài scope xử lý thủ công; kiểm mẫu **10%** các quyết định tự động theo Phiếu B/C12. Ca nhiều kiện không xác định rõ kiện phải hỏi lại/chuyển người **trước** `issue_refund` và `file_carrier_fault`. Mỗi quyết định lưu `parcel_id`, `carrier_id`, `driver_id`, delay, nguồn tracking, lý do và người duyệt. Giữ trần hoàn/ngày 1.600.000đ, không sửa snapshot/criteria vòng 1. |
+| Nói gì với bên thứ ba bị ảnh hưởng (hãng, shop, người nhận, nhân viên duyệt), ai nói, trong bao lâu? | **NV-OANH** rà các bản ghi lỗi hãng/tài xế liên quan, phối hợp **NV-TUNG** tạm giữ quy trách nhiệm khi thiếu chứng cứ; thông báo cho hãng/tài xế rằng đang đối soát **theo mã kiện**, không kết luận lỗi từ độ trễ toàn đơn. **NV-HANH** báo người duyệt các ticket cần xác minh; người liên hệ khách chỉ yêu cầu mã kiện và thông tin tối thiểu. **Mục tiêu đề xuất:** thông báo nội bộ ngay khi xác nhận sự cố, liên hệ đối tác trong 24 giờ; chưa có bằng chứng đã gửi thông báo thật hoặc SLA pháp lý được phê duyệt. |
+| Dữ liệu cá nhân nào đã rời hệ thống mà không thu hồi được? Báo cho ai? | **Chưa xác định có dữ liệu nào đã rời hệ thống:** report S6 after ghi `pii_leaks=0` trong mock, không chứng minh đường tích hợp production tuyệt đối an toàn. Nếu phát hiện tên/số điện thoại/địa chỉ bị gửi nhầm, NV-TUNG dừng luồng `notify_carrier`, NV-OANH cùng PIC pháp lý/bảo mật lập biên bản, xác định người nhận và đánh giá nghĩa vụ thông báo theo chính sách áp dụng; không giả định thu hồi được dữ liệu đã gửi. |
+| Sự cố lộ ra trước qua số máy đo, phản hồi của người, hay đọc nội dung? Nguồn nào bàn chưa có? | Theo card S6, **phản hồi của trưởng nhóm tài xế/hãng nhỏ** chỉ ra bị ghi lỗi oan; trace `S6-01@11` xác nhận P1/GHSH trễ 0 ngày nhưng bị ghi lỗi thay P2/VNX trễ 4 ngày; `S6-20@11` cho thấy ca mơ hồ vẫn bị ghi tiền/lỗi. Chưa có số liệu production về khiếu nại hãng, ảnh hưởng thưởng/phạt thực tế, độ trễ tracking và việc alert có đến người trực đúng hạn hay không. |
 
 ### Runbook 5 · Ba kịch bản "nếu … thì …" cho tuần đầu chạy thử thật
 
-1. Nếu số ticket tăng gấp ___ lần trong một giờ thì: …
-2. Nếu nhà cung cấp LLM lỗi quá ___ phút thì: …
-3. Nếu người duyệt báo không tin một quyết định của trợ lý thì: …
+1. **Nếu số ticket tăng gấp 2 lần trong một giờ** so với lưu lượng dự kiến: NV-TUNG so tải với năng lực **1 người ×6 ca/giờ**; NV-HANH ưu tiên ticket nhiều kiện mơ hồ, đưa phần vượt năng lực sang xử lý thủ công. Khi chờ đạt **30–59 phút** thì điều phối hàng chờ (VÀNG); **≥60 phút** hoặc có `queue_stuck ≥1` thì NV-TUNG thu hẹp/tắt luồng liên quan theo Runbook 3, mục tiêu hoàn tất dừng trong 5 phút từ khi xác nhận ĐỎ. Ngưỡng tăng gấp 2 là kịch bản diễn tập đề xuất, chưa phải kết quả stress test.
+2. **Nếu nhà cung cấp LLM lỗi liên tục quá 5 phút:** NV-TUNG tắt các thao tác ghi/gửi tự động phụ thuộc kết quả LLM, lưu mã ticket/trạng thái xử lý để tránh thực hiện lại giao dịch, NV-HANH chuyển ca sang duyệt thủ công. Khi dịch vụ phục hồi, chỉ bật lại sau smoke test, kiểm tra không ghi trùng và xác nhận của người có thẩm quyền; 5 phút là ngưỡng ứng phó đề xuất, không phải SLA đã được chứng minh.
+3. **Nếu người duyệt báo không tin một quyết định của trợ lý:** NV-HANH giữ `issue_refund`, `file_carrier_fault` và thông báo hãng của ticket đó; yêu cầu đối chiếu `parcel_id`, `carrier_id`, `driver_id`, ngày hẹn/ngày giao, policy và chứng cứ tracking. NV-OANH rà sổ hoàn/sổ lỗi nếu đã có tác động bên thứ ba; NV-TUNG kiểm tra log/monitor và quyết định có cần dừng luồng tương tự. Ghi lại lý do bác quyết định, kết quả đối soát và người chịu trách nhiệm trước khi cho xử lý tiếp.
 
 ---
 
