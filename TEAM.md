@@ -43,6 +43,36 @@ Commit business `1684f51`, hợp nhất Phiếu B `76a308e`/`35735e4`; nhập th
 
 
 
+## QuachNgocPhuc-2A202603665
+
+### Phần việc phụ trách
+
+Kỹ sư cổng và trưởng nhóm; phối hợp Hồ Quốc Toản ở phần kỹ thuật. Phụ trách thước đo bước ở Phiếu A A2; baseline, gate và trace tại B0–B2; phần kỹ thuật B5/B6; cổng và behavioral test B7.1–B7.3; chạy checkpoint/prepared để cung cấp bằng chứng B8. Sau khi nhận S6, phụ trách phân tích kỹ thuật C2/C4/C5-spec/C6, sửa cổng C7, monitor C8, fault tree sau sửa C9 và rủi ro kỹ thuật C10. File chính: `lab10/guards.py`, `lab10/monitors.py`, các phần kỹ thuật trong Phiếu B/C. Quyết định v1/v2 và ngưỡng là của cả nhóm; business do Ngô Văn Tuân, vận hành/pháp lý do Nguyễn Đức Minh phụ trách.
+
+### Đóng góp cụ thể
+
+- Tổng hợp tiêu chí Phiếu A cùng nhóm, đồng bộ ngưỡng được nhóm chốt sang JSON và đại diện ký, commit/push trước lần đánh giá đầu tiên; giữ nguyên tiêu chí sau ký.
+- Đo baseline 110 trial và dò `T-002@55`: xác định agent dùng 5 ngày khách khai thay 2 ngày tracking, dẫn đến hoàn sai 20.000đ và ghi lỗi oan VNX; phân biệt chỉ số tổng đạt với điều kiện an toàn không đạt.
+- Viết cổng vòng 1 kiểm quyền lợi/phê duyệt trước hoàn tiền, căn cứ kiện/hãng trước ghi lỗi và payload tối thiểu trước gửi hãng; ghim policy theo ngày hiệu lực. Chạy hai ticket mới tự khai trễ 9/12 ngày để kiểm cổng, sửa regression phát hiện trong quá trình thử và chốt snapshot vòng 1.
+- Với S6, xác định ba nhánh: dùng kiện đầu thay kiện khách yêu cầu; thiếu parcel_id khi nhiều kiện trễ nhưng vẫn ghi tiền; thiếu trần lỗi hãng cộng dồn trong ngày. Sửa cổng ghi lỗi để dùng bộ tham số đúng kiện, chuyển người trước khi ghi khi yêu cầu mơ hồ, chặn lỗi hãng tự động vượt trần Ops mà vẫn giữ khoản hoàn hợp lệ.
+- Thêm `multi_parcel_exposure_rate` và `ambiguous_parcel_rate` trong MONITORS, chỉ dùng sự kiện không có nhãn; giải thích đây là tín hiệu tiếp xúc/rủi ro và nhu cầu duyệt, không phải nhãn xác nhận lỗi oan.
+- Kiểm tra regression bằng 13 test công khai, đánh giá phạm vi pilot và replay toàn bộ bộ nền/S6 trong bộ nhớ; ghi rõ khác biệt giữa số trial chính thức theo phạm vi với kiểm bổ sung toàn phạm vi. Giữ nguyên snapshot và tiêu chí đã ký; không xử lý riêng theo ID ticket/seed.
+- Dùng Codex hỗ trợ đọc đề/code/trace, soạn Phiếu A và phần kỹ thuật Phiếu B/C, đề xuất/viết cổng và monitor, chạy kiểm tra và hỗ trợ Git. Bản thân chịu trách nhiệm đọc lại, giải thích cách hoạt động, giới hạn và bằng chứng; không coi nội dung AI soạn là xác nhận thay các thành viên.
+
+### Bằng chứng
+
+- Commit ký tiêu chí: `d77c361` (Sign acceptance criteria); hash tiêu chí `2def0fbb`. Commit phần kỹ sư Phiếu B: `9c9de60`; bản hoàn thiện vòng 1 `5da3d68`; phần sửa S6/phiếu kỹ thuật được lưu trong `497d9a5`.
+- Baseline: `R-base-before-20261118-151704-b45eeb`, pass_rate 0.9909, pass_k 0.9545; trace `T-002@55` là bằng chứng nguyên nhân đầu vào ghi đè tracking.
+- Vòng 1: after `R-base-after-20261118-163602-038c7e`; prepared `R-base-prepared-20261118-163627-038c7e`, 65/65 trial trong phạm vi đạt; snapshot hash `18b4521b`. Hai adhoc và kết quả ghi tại B7.3; đối chiếu full scope ở `runs/round1-full-scope-regression.json` đạt 110/110.
+- S6: trace prepared/after `S6-01@11` (kiện đúng nhưng ghi sai đối tượng), `S6-20@11` (nhiều kiện trễ chưa rõ ý định). Sau sửa `S6-01` ghi đúng P2/VNX; `S6-20` chuyển người trước khi ghi, ledger/fault/outbound rỗng.
+- Report sau sửa: `R-S6-after-20261118-170014-83599a`, S6 40/40 trong phạm vi đạt, hoàn sai/lỗi hãng oan/PII đều 0, chi phí 7.372đ/ticket, ROI 0.36; bộ nền `R-base-after-20261118-170014-83599a` đạt 65/65. Grade đối chiếu `R-S6-grade-20261118-170014-83599a` và lần chạy lại `R-S6-grade-20261118-170933-83599a` xác nhận after pass_rate=1.0; không nhầm với base=0.3333 hoặc prepared=0.375.
+- Kiểm bổ sung `runs/S6-engineering-full-scope.json`: S6 60/60 và bộ nền 110/110 đạt; các ca S6-42/43 vẫn hoàn đúng nhưng không ghi thêm lỗi vượt trần. 13/13 test công khai đạt; chưa có kết quả test ẩn.
+
+### Exit ticket
+
+- **Điều học được:** agent có thể báo thành công và đạt pass_rate tổng cao nhưng vẫn gây tác hại ở sổ tiền hoặc sổ lỗi hãng. Cổng phải kiểm nguồn có thẩm quyền và đặt đúng thời điểm: với đơn nhiều kiện chưa rõ ý định, chặn tại bước ghi lỗi là quá muộn nếu tiền đã ra. Ba mốc base/prepared/after giúp phân biệt mức chuẩn bị và hiệu quả sửa sự cố.
+- **Điều còn chưa chắc:** cổng đếm lỗi hãng hiện chạy trên sổ ngày tuần tự của mock; cần kiểm tính nguyên tử khi nhiều worker cùng ghi, ranh giới ngày, chất lượng tracking thật và năng lực người duyệt khi tải dồn. Kết quả lab chưa chứng minh các điều kiện này trong pilot thật.
+
 ## HoVaTen-MSSV
 
 ### Phần việc phụ trách
