@@ -73,6 +73,22 @@ Kỹ sư cổng và trưởng nhóm; phối hợp Hồ Quốc Toản ở phần 
 - **Điều học được:** agent có thể báo thành công và đạt pass_rate tổng cao nhưng vẫn gây tác hại ở sổ tiền hoặc sổ lỗi hãng. Cổng phải kiểm nguồn có thẩm quyền và đặt đúng thời điểm: với đơn nhiều kiện chưa rõ ý định, chặn tại bước ghi lỗi là quá muộn nếu tiền đã ra. Ba mốc base/prepared/after giúp phân biệt mức chuẩn bị và hiệu quả sửa sự cố.
 - **Điều còn chưa chắc:** cổng đếm lỗi hãng hiện chạy trên sổ ngày tuần tự của mock; cần kiểm tính nguyên tử khi nhiều worker cùng ghi, ranh giới ngày, chất lượng tracking thật và năng lực người duyệt khi tải dồn. Kết quả lab chưa chứng minh các điều kiện này trong pilot thật.
 
+## NguyenDucMinh-2A202603633
+
+### Phần việc phụ trách
+
+Sản phẩm và kinh doanh: B3, phần kinh doanh B6, B7.4; C3.2, C5, phần kinh doanh C7, risk register C10 và đề xuất v2 C12. Đối chiếu trace và các phần phân tích kỹ thuật của Quách Ngọc Phúc để nối tác hại với quyết định kinh doanh; không ghi nhận phần kỹ thuật của đồng đội là của mình.
+
+### Đóng góp cụ thể
+
+- Vận hành và pháp lý; phụ trách đánh giá tác động lên hãng vận chuyển, tài xế, khách hàng và người duyệt khi đưa trợ lý từ PoC sang pilot.
+- Tham gia hoàn thiện phần HAZOP đối với file_carrier_fault, checklist dữ liệu/bảo mật/phân quyền/hiệu năng, năng lực người duyệt, quy trình đối soát và giới hạn trách nhiệm pháp lý.
+- Phân tích nguy cơ ghi lỗi oan cho hãng/tài xế khi một đơn có nhiều kiện; đóng góp góc nhìn vận hành và pháp lý cho C3.2 (hình dung của các bên), C11 (runbook) và C12 (điều kiện quyết định Gate 1 v2).
+
+### Exit ticket
+- Điều học được: Một gate tốt không chỉ kiểm tra tính đúng của câu trả lời mà còn phải kiểm soát tác động thực tế của lệnh ghi tiền và quy trách nhiệm cho bên thứ ba; với đơn nhiều kiện, bằng chứng phải gắn đúng kiện/hãng/tài xế.
+- Điều còn chưa chắc: Độ đầy đủ và độ trễ của dữ liệu tracking ngoài thực tế, năng lực xử lý của người duyệt khi lượng ca tăng, và liệu các monitor có phát cảnh báo kịp thời trong pilot thật hay không.
+
 ## HoVaTen-MSSV
 
 ### Phần việc phụ trách
