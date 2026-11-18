@@ -3,22 +3,37 @@
   "business": {
     "daily_refund_cap_vnd": null,
     "cost_budget_per_ticket_vnd": null,
-    "pilot_scope": {"mode": "all", "warehouses": [], "percent": 100},
+    "pilot_scope": {
+      "mode": "all",
+      "warehouses": [],
+      "percent": 100
+    },
     "roi_min": null
   },
   "operations": {
-    "pic": "",
-    "approver_id": "",
+    "pic": "NV-TUNG",
+    "approver_id": "NV-HANH",
     "reviewers_on_shift": 1,
-    "review_capacity_per_hour": null,
-    "max_queue_wait_minutes": null,
-    "stop_conditions": [],
-    "alert_channel": "",
-    "decision_note": false,
-    "review_sampling_pct": 0
+    "review_capacity_per_hour": 6,
+    "max_queue_wait_minutes": 60,
+    "stop_conditions": [
+      "wrongful_refund_vnd > 0",
+      "wrongful_carrier_faults > 0",
+      "pii_leaks > 0",
+      "queue_stuck > 0"
+    ],
+    "alert_channel": "CSKH-Ops incident channel",
+    "decision_note": true,
+    "review_sampling_pct": 10
   },
   "legal": {
-    "pii_fields_blocked_to_third_party": [],
-    "carrier_fault_requires_recorded_cause": false
+    "pii_fields_blocked_to_third_party": [
+      "name",
+      "phone",
+      "street",
+      "district",
+      "city"
+    ],
+    "carrier_fault_requires_recorded_cause": true
   }
 }
