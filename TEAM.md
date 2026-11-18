@@ -41,9 +41,7 @@ Sản phẩm và kinh doanh: B3, phần kinh doanh B6, B7.4; C3.2, C5, phần ki
 
 Commit business `1684f51`, hợp nhất Phiếu B `76a308e`/`35735e4`; nhập thẻ S6 `581b1dd`, hồ sơ nhận thẻ `7bb1c43`. Report trước sửa R-S6-grade-20261118-165047-b7ef74; đối chiếu sau sửa R-S6-grade-20261118-170718-bc2890 và R-base-after-20261118-170747-bc2890; trace S6-01@11 (base/prepared), S6-21@11 (prepared); kiểm bổ sung S6-product-full-scope-verification.json và S6-product-cost-sensitivity.json trong runs/. Nội dung Phiếu C C3.2/C5 giả định/C7 kinh doanh/C10/C11 chi phí/C12; code guard/monitor S6 do Kỹ sư cổng làm, chưa có kết quả test ẩn.
 
-### Exit ticket
 
-Chờ Ngô Văn Tuân tự viết điều học được và điều còn chưa chắc sau khi kiểm tra phần việc; không ghi thay phản hồi cá nhân.
 
 ## HoVaTen-MSSV
 
