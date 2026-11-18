@@ -152,15 +152,15 @@ mà cả bàn chưa nghĩ tới, không phải tả lại nhánh đã biết.
 **Câu hỏi dẫn dắt:** tool nào tạo ra hậu quả không đảo ngược? Mỗi tham số của tool đó lấy từ đâu (ticket, DB, model tự suy)?
 Với mỗi guideword: hậu quả cho ai, hiện có gì ngăn, cần thêm gate ở tầng nào (phát hiện / chặn / giới hạn thiệt hại)?
 
-Tool chọn phân tích: `________________` (gợi ý: `issue_refund`, `file_carrier_fault`, `notify_carrier`)
+Tool chọn phân tích: `file_carrier_fault` (ghi trách nhiệm hãng/tài xế; một lệnh ghi có thể gây tác hại cho bên thứ ba).
 
 | Tham số / dòng dữ liệu | Guideword | Lệch cụ thể (viết bằng dữ kiện của lab) | Hậu quả, cho ai | Hiện có gì ngăn? | Gate đề xuất + tầng |
 |---|---|---|---|---|---|
-| | WRONG | | | | |
-| | INVALID | | | | |
-| | INCOMPLETE | | | | |
-| | PERTURBED | | | | |
-| | INCAPABLE | | | | |
+| `delay_days`, `carrier_id`, `driver_id` | WRONG | `T-002@55`: tracking trễ 2 ngày nhưng agent dùng 5 ngày để ghi lỗi VNX/TX-VNX-03 | Hãng và tài xế bị ghi oan; kế toán phải đối soát | Baseline đã ghi oan 1 lỗi, nên kiểm soát hiện tại chưa đủ | **Chặn trước ghi:** đối chiếu độ trễ, kiện, hãng và chính sách hiệu lực từ tracking; mâu thuẫn thì chuyển người |
+| `parcel_id`, `carrier_id` | INVALID | **Nhánh giả định chưa thấy trên trace:** đơn có nhiều kiện, agent lấy đúng định dạng mã hãng nhưng thuộc kiện khác hoặc bản ghi tracking cũ | Ghi trách nhiệm nhầm hãng/tài xế | Chưa có bằng chứng guard kiểm quan hệ kiện–hãng | **Chặn trước ghi:** xác minh kiện thuộc đơn, hãng/tài xế đúng bản ghi tracking hiện hành |
+| `cause_recorded`, `delay_days` | INCOMPLETE | Có mã hãng nhưng thiếu nguyên nhân được ghi nhận hoặc thiếu ngày giao xác thực | Không đủ căn cứ kết luận lỗi hãng; nguy cơ khiếu nại | Cấu hình đề xuất `carrier_fault_requires_recorded_cause=true`, chưa xác nhận code thực thi | **Chặn/chuyển người:** bắt buộc có nguyên nhân, độ trễ và chính sách tương ứng; thiếu dữ liệu không ghi lỗi |
+| `parcel_id`, yêu cầu ghi lỗi | PERTURBED | **Nhánh giả định:** ticket lặp lại hoặc chứa chỉ dẫn ép agent ghi lỗi nhiều lần cho cùng kiện | Trùng lỗi hãng, tạo sai lệch đối soát | Chưa có bằng chứng cơ chế chống ghi trùng | **Giới hạn thiệt hại:** khóa idempotency theo kiện–loại lỗi–ngày và lọc chỉ dẫn từ ticket |
+| Phản hồi tracking/policy | INCAPABLE | **Nhánh giả định:** nguồn tracking timeout hoặc không tải được chính sách hiệu lực | Agent có thể ghi lỗi dựa trên suy đoán | Chưa có bằng chứng cơ chế fail-closed | **Chặn:** không gọi `file_carrier_fault` khi không xác minh được nguồn; đưa vào hàng chờ NV-HANH |
 
 Không bắt buộc điền đủ năm dòng. Bắt buộc: **ít nhất ba dòng, trong đó một dòng là nhánh bàn chưa thấy trên trace**.
 
@@ -190,10 +190,10 @@ Trạng thái: **Xong** (có bằng chứng) · **Chưa** · **Không áp dụng
 | # | Nhóm việc | Bằng chứng lấy từ đâu (đã có sẵn trong lab) | Mục cần kiểm tra | Trạng thái | Bằng chứng | PIC |
 |---|---|---|---|---|---|---|
 | 1 | Chất lượng | Report `lab10.eval` (mã lần chạy) + bảng soát lỗi (Phiếu B mục B2) | | | | |
-| 2 | Dữ liệu | Bản đồ dữ liệu (Phiếu B mục B3, câu 2.3): trường nào là nguồn sự thật, trường nào là bản sao | | | | |
-| 3 | Bảo mật | Một vòng HAZOP với guideword PERTURBED (Phiếu B mục B4): chữ nào đi vào model mà không do LogiX viết | | | | |
-| 4 | Quyền hạn | `config/switches.json` + guard trước lệnh ghi; thẻ S2, S8 có thêm mục mức kiểm soát (Phiếu C mục C3) | | | | |
-| 5 | Hiệu năng, hạ tầng | Đội tự ước tính; HAZOP guideword INCAPABLE: LLM không trả lời thì sao; số người duyệt và số ca mỗi giờ | | | | |
+| 2 | Dữ liệu | B3 và tracking/policy trong `data/world.json` | Xác minh độ trễ, phiên bản policy, quan hệ đơn–kiện–hãng; không lấy lời khách làm nguồn sự thật | Chưa | B3 đã mô tả nguồn và drift; chưa có kiểm thử tự động dữ liệu thiếu/cũ | Nguyễn Đức Minh |
+| 3 | Bảo mật | B4 (PERTURBED), B7.5 và `legal` config | Ngăn prompt injection từ ticket; lọc tên/số điện thoại/địa chỉ trước khi gửi hãng | Chưa | Có kịch bản và cấu hình đề xuất; chưa có trace xác nhận PII không rời hệ thống | Nguyễn Đức Minh |
+| 4 | Quyền hạn | `config/switches.json`, B7.5 Runbook 1 và 3 | Kiểm người có quyền duyệt, người giữ công tắc, tác động thực tế khi tắt ghi | Chưa | Đã phân vai NV-HANH/NV-TUNG; chưa có bằng chứng diễn tập dừng và phân quyền tool | Nguyễn Đức Minh |
+| 5 | Hiệu năng, hạ tầng | `ops_facts`, B4 INCAPABLE, B7.6 | 1 người × 6 ticket/giờ; kịch bản 14 ca/giờ, đường lui khi LLM/tracking lỗi | Chưa | Có ước tính công suất; chưa chạy stress test hoặc đo SLA ở tải gấp ba | Nguyễn Đức Minh |
 | 6 | Chi phí | Khối "kinh doanh và vận hành" của report: chi phí mỗi ticket so với làm tay, ROI, tiền LLM ticket đắt nhất; `config/operating_gates.json` mục `business` | | | | |
 | 7 | Vận hành | B7.5–B7.6, operating_gates.json, monitors.py | PIC, công suất duyệt, SLA, cảnh báo, điều kiện dừng và runbook | Chưa | B7.5–B7.6 là thiết kế; chưa có bằng chứng diễn tập và monitor production | Nguyễn Đức Minh |
 | 8 | Con người, pháp lý | B4, B6, B7.5, operating_gates.json | Chặn PII, căn cứ ghi lỗi hãng, tiếp nhận khiếu nại | Chưa | Cần kiểm chứng guard và luồng gửi dữ liệu bên thứ ba | Nguyễn Đức Minh |
@@ -344,6 +344,13 @@ Các ngưỡng VÀNG là đề xuất cảnh báo sớm. Report là bằng chứ
 | Thêm người thì chi phí/ROI thế nào? | Hai người trực bổ sung làm tăng phí giữ chỗ 60.000đ/ca theo ops_facts; cần chạy lại report để xác nhận chi phí/ticket và ROI |
 
 **Lưu ý:** `reviewers_on_shift=1` phản ánh ca mặc định. Phương án 3 người chỉ áp dụng khi được bố trí thực tế và cập nhật cấu hình, không coi là đã kích hoạt.
+
+**Kiểm tra tải và chi phí:** Với 14 ca cần duyệt trong một giờ, 1 người có công suất 6 ca/giờ nên tồn đọng có thể tăng 8 ca trong giờ đó nếu không có ca được xử lý trước. Cần tối thiểu `ceil(14/6)=3` người để đáp ứng 14 ca/giờ ở mức công suất lý thuyết; công suất thực tế và SLA vẫn phải đo. Hai người bổ sung có phí giữ chỗ `2 × 30.000 = 60.000đ/ca`, chưa thể suy ra chi phí/ticket và ROI mới nếu chưa biết tổng ticket xử lý trong ca và report sau thay đổi.
+
+**Kiểm soát pháp lý và đối soát:** Trước `notify_carrier`, chỉ gửi các trường cần thiết cho xử lý khiếu nại/ghi lỗi, không chuyển nguyên văn nội dung tự do của khách nếu có PII không cần thiết. Trước `file_carrier_fault`, đối chiếu `parcel_id`, `carrier_id`, `driver_id`, `delay_days`, nguyên nhân ghi nhận và chính sách hiệu lực; thiếu hoặc mâu thuẫn thì chuyển NV-HANH. NV-OANH lưu bằng chứng, tiếp nhận khiếu nại hãng/shop, đối soát và đề xuất điều chỉnh theo thẩm quyền, không xóa lịch sử ghi sai. Đây là quy trình đề xuất, **chưa có bằng chứng code đã triển khai đầy đủ**.
+
+**Còn phải xác minh trước go-live:** kênh cảnh báo thực tế; danh sách tên trường PII đúng với payload gửi hãng; việc `stop_conditions` được code đọc và kích hoạt; hiệu lực của công tắc khi tiến trình đang chạy; người trực bổ sung và bài diễn tập dừng trong 5 phút.
+
 
 ---
 
