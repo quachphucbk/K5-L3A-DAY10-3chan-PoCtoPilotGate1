@@ -115,7 +115,7 @@
 
 ## A5 · Ký và đẩy tiêu chí (phút 60–65)
 
-**Chưa thực hiện.** Chỉ làm sau khi cả nhóm duyệt bản cuối A1–A4, chọn PRD/eval card chung, điền `team`, `signed_by`, các ngưỡng và hành động vào `config/acceptance_criteria.json`. Phải ký, commit và push trước lần chạy đánh giá đầu tiên.
+**Đã thực hiện:** nhóm chốt A1–A4; tiêu chí đã được ký, commit và push lên `origin/main` trước lần đánh giá đầu tiên.
 
 ```bash
 python3 -m lab10.criteria sign
@@ -124,8 +124,8 @@ git add config/acceptance_criteria.json config/acceptance_criteria.lock && git c
 
 | Mục | Điền |
 |---|---|
-| Đã ký lúc (giờ máy in hoặc `signed_at` trong `config/acceptance_criteria.lock`) | Chưa ký; điền thời điểm thật sau khi chạy lệnh. |
-| Mã commit `Sign acceptance criteria` (7 ký tự đầu, `git log --oneline -1`) | Chưa có commit ký; điền mã thật sau khi commit. |
-| Đã push lên `origin main` thành công? | Chưa thực hiện. |
+| Đã ký lúc (giờ máy in hoặc `signed_at` trong `config/acceptance_criteria.lock`) | 2026-11-18T15:13:21 (giờ máy; đối chiếu lock) |
+| Mã commit `Sign acceptance criteria` (7 ký tự đầu, `git log --oneline -1`) | `d77c361` — `Sign acceptance criteria` |
+| Đã push lên `origin main` thành công? | Có; push `4f9da77..d77c361` thành công trước lần đánh giá đầu tiên. |
 
 Sau khi ký **không sửa** `config/acceptance_criteria.json`, kể cả định dạng. Ghi việc AI hỗ trợ soạn nháp Phiếu A vào mục đóng góp cá nhân trong `TEAM.md` khi hoàn tất bài.
