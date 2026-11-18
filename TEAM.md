@@ -2,9 +2,9 @@
 
 ## Thông tin nhóm
 
-- Tên nhóm (`TenNhom`, không dấu, không khoảng trắng):
-- Lớp: `L3A` / `L3B`
-- Repo của bàn: `K5-<L3A|L3B>-DAY10-<TenNhom>-PoCtoPilotGate1`
+- Tên nhóm (`TenNhom`, không dấu, không khoảng trắng): 3chan
+- Lớp: L3A
+- Repo của bàn: https://github.com/quachphucbk/K5-L3A-DAY10-3chan-PoCtoPilotGate1
 - Thẻ sự cố đã bốc (S1–S8):
 
 ## Thành viên
@@ -14,7 +14,7 @@ Họ tên đầy đủ và MSSV của **mọi** thành viên; thêm dòng nếu 
 | STT | Họ và tên | MSSV | Vai | Trưởng nhóm |
 | --: | --------- | ---- | --- | :---------: |
 |   1 |           |      |     |             |
-|   2 |           |      |     |             |
+|   2 | Nguyễn Đức Minh          | 2A202603633     |     |             |
 |   3 |           |      |     |             |
 |   4 |           |      |     |             |
 
