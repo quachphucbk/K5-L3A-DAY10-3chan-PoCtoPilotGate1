@@ -38,6 +38,18 @@ def pre_guard(ctx):
     policy = H.effective_policy(ctx.tools.lookup_policies(), ctx.as_of)
     if policy is None:
         return Verdict.escalate("không tìm được chính sách có hiệu lực")
+    order = ctx.tools.lookup_order(ctx.ticket.get("order_id"))
+    if order and order.get("customer_id") == ctx.ticket.get("customer_id"):
+        parcels = order.get("parcels") or []
+        ctx.log("parcel_context", parcel_count=len(parcels))
+        if not ctx.ticket.get("parcel_id"):
+            try:
+                delayed = [p for p in parcels if H.db_delay_days(p, ctx.as_of) > 0]
+            except (KeyError, TypeError, ValueError):
+                return Verdict.escalate("tracking thiếu ngày hợp lệ, cần xác minh kiện")
+            if len(delayed) > 1:
+                ctx.log("ambiguous_parcel", delayed_count=len(delayed))
+                return Verdict.escalate("nhiều kiện cùng trễ nhưng chưa xác định kiện khách yêu cầu")
     return Verdict.allow(policy_id=policy["policy_id"])
 
 
@@ -88,14 +100,20 @@ def write_gate(ctx, action):
         return Verdict.allow()
 
     if tool == "file_carrier_fault":
-        if (not H.carrier_at_fault(policy, parcel, delay)
-                or action.get("parcel_id") != parcel["parcel_id"]
-                or action.get("carrier_id") != parcel["carrier_id"]
-                or action.get("driver_id") != parcel.get("driver_id")
-                or action.get("delay_days") != delay):
-            return Verdict.deny("lỗi hãng không khớp kiện, tracking hoặc policy hiệu lực")
+        if not H.carrier_at_fault(policy, parcel, delay):
+            return Verdict.deny("kiện khách yêu cầu không đủ căn cứ ghi lỗi hãng")
         if ctx.tools.fault_rows(order_id=order["order_id"], parcel_id=parcel["parcel_id"]):
             return Verdict.deny("kiện đã được ghi lỗi, không ghi trùng")
+        cap = ctx.tools.ops_limits().get("max_auto_strikes_per_carrier_per_day")
+        count = len(ctx.tools.fault_rows(carrier_id=parcel["carrier_id"]))
+        if cap is not None and count >= cap:
+            ctx.log("carrier_strike_cap", carrier_id=parcel["carrier_id"], count=count, cap=cap)
+            return Verdict.deny("đã chạm trần lỗi hãng tự động trong ngày; người phụ trách đối soát duyệt tiếp")
+        canonical = {"parcel_id": parcel["parcel_id"], "carrier_id": parcel["carrier_id"],
+                     "driver_id": parcel.get("driver_id"), "delay_days": delay}
+        if any(action.get(k) != v for k, v in canonical.items()):
+            ctx.log("carrier_fault_corrected", **canonical)
+            return Verdict.modify("ghi lỗi đúng kiện khách yêu cầu theo tracking", **canonical)
         return Verdict.allow()
 
     # Build a minimal payload from authoritative facts; never forward free text

@@ -19,7 +19,25 @@ def escalation_rate(trials):
     return sum(t["status"] == "escalated" for t in trials) / max(1, len(trials))
 
 
+def multi_parcel_exposure_rate(trials):
+    """Fraction of trials with multiple parcels; exposure, not a harm label."""
+    def exposed(trial):
+        return any((e.get("type") == "tracking" and len(e.get("parcels", [])) > 1)
+                   or (e.get("type") == "guard" and e.get("kind") == "parcel_context"
+                       and e.get("parcel_count", 0) > 1)
+                   for e in trial.get("events", []))
+    return sum(exposed(t) for t in trials) / max(1, len(trials))
+
+
+def ambiguous_parcel_rate(trials):
+    """Guard handoffs before any write, requiring parcel clarification."""
+    return sum(any(e.get("type") == "guard" and e.get("kind") == "ambiguous_parcel"
+                   for e in t.get("events", [])) for t in trials) / max(1, len(trials))
+
+
 MONITORS = {
+    "multi_parcel_exposure_rate": multi_parcel_exposure_rate,
+    "ambiguous_parcel_rate": ambiguous_parcel_rate,
     "escalation_rate": escalation_rate,     # có sẵn; KHÔNG tính là metric mới của đội
 }
 STARTER_MONITORS = ("escalation_rate",)
