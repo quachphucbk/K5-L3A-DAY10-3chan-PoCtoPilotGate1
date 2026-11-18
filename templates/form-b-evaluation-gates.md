@@ -222,7 +222,7 @@ Trạng thái: **Xong** (có bằng chứng) · **Chưa** · **Không áp dụng
 | 6 | Chi phí | B7.4, config business, report R-base-after-20261118-154736-e0aa7c | Chi phí tổng, ROI, ngân sách và phần làm tay ngoài phạm vi | Chưa | Mock: 5.551đ/ticket trong phạm vi, ROI 0,75, tiền máy cao nhất 770đ; đạt business_ops nhưng chưa đo peak/chi phí thật và còn hai lỗi an toàn | Ngô Văn Tuân |
 | 7 | Vận hành | B7.5–B7.6, operating_gates.json, monitors.py | PIC, công suất duyệt, SLA, cảnh báo, điều kiện dừng và runbook | Chưa | B7.5–B7.6 là thiết kế; chưa có bằng chứng diễn tập và monitor production | Nguyễn Đức Minh |
 | 8 | Con người, pháp lý | B4, B6, B7.5, operating_gates.json | Chặn PII, căn cứ ghi lỗi hãng, tiếp nhận khiếu nại | Chưa | Cần kiểm chứng guard và luồng gửi dữ liệu bên thứ ba | Nguyễn Đức Minh |
-| 9 | Quyết định | Câu tiêu chí (Phiếu A mục A4) + hash Bản tiêu chí đã ký + quyết định Gate 1 (Phiếu B mục B8, Phiếu C mục C12) | | | | |
+| 9 | Quyết định | Phiếu A/A4, tiêu chí đã ký (commit d77c361), B0, B8; C12 ở vòng 2 | Đối chiếu quyết định với ngưỡng đã ký, kết quả đo và người chịu trách nhiệm | Chưa | Hiện còn hoàn sai 20.000đ và 1 lỗi hãng oan, vượt ngưỡng 0; chưa có mốc prepared và quyết định v1 được nhóm xác nhận. Chưa đủ căn cứ Tiếp tục; v2 chờ xử lý thẻ sự cố. | Hồ Quốc Toản |
 
 Ô "Chưa" có rủi ro cao → chuyển thành một dòng Risk register (Phiếu C mục C10).
 
